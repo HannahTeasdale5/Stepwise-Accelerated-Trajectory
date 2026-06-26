@@ -1,22 +1,45 @@
+import numpy as np
+
 def main():
     print("Main")
+    a = 0.5 #must be below c
+    T = 10
+    t = np.linspace(0, 2*T, 1000)
+    c = 1
+    tao = proper_time(a, t, T, c)
+    print(tao)
+
+def acceleration (a, t, T):
+    if t < T/2:
+        return a
+    elif t < 3*T/2:
+        return -a
+    else:
+        return a
+
+def velocity (a, t, T):
+    if t < T / 2:
+        return a*t
+    elif t < 3 * T / 2:
+        return a*(T-t)
+    else:
+        return a*(t-2*T)
+
+def antiderivative(k, u):
+    root = (1 - k*u)**(-1/2)
+    return (u/2)*root + (1/(2*k))*np.arcsin(k*u)
+
+def g_function(a, c, t):
+    return antiderivative(a/c, t)
+
+def proper_time(a, t, T, c):
+    if t < T / 2:
+        return g_function(a, c, t)
+    elif t < 3 * T / 2:
+        return 2*g_function(a, c, T/2) + g_function(a, c, t-T)
+    else:
+        return 4*g_function(a, c, T/2) + g_function(a, c, t-2*T)
 
 
-def coord_velocity ( t, v_0):
-    integral = scipy.integrate.quad(coord_acceleration, 0, t)
-    return v_0 + integral
-
-def gamma(t, v_0):
-    return  1/((1-(coord_veloity(t, v_0)/c)**2)**(1/2))
-
-def inverse_gamma(t, v_0):
-    return 1/gamma(t, v_0)
-
-def proper_time (t, v_0):
-    return scipy.integrate.quad(inverse_gamma, 0, t, args=(v_0))
-
-def proper_wordline():
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
