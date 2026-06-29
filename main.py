@@ -3,16 +3,22 @@ import matplotlib.pyplot as plt
 
 
 def main():
+
+    #parameters
     x_max = 0.005
-    v_max = 0.4 #aT/c needs to be between 0 and 1 so v_max <= c/2, not sure why the factor of 1/2
+    v_max = 0.2 #aT/c needs to be between 0 and 1 so v_max <= c/2, not sure why the factor of 1/2
     a0 = (v_max**2)/x_max
     T = 2*x_max/v_max
     t = np.linspace(0, 2 * T, 10000)
     c = 1
+
+
     tao = proper_time(a0, t, T, c)
     x_t = trajectory_t(a0, t, T)
     v_t = velocity_t(a0, t, T)
     a_t = acceleration_t(a0, t, T)
+
+    x_tao = trajectory_tao(a0, tao, T)
 
     plt.plot(t, tao)
     plt.title("Tao")
@@ -27,32 +33,42 @@ def main():
     plt.title("A")
     plt.show()
 
+    plt.plot(tao, x_tao)
+    plt.title("X in accelerated coordinates")
+    plt.show()
+    plt.plot(tao, v_tao)
+    plt.title("V in accelerated coordinates")
+    plt.show()
+    plt.plot(tao, a_tao)
+    plt.title("A in accelerated coordinates")
+    plt.show()
 
 
-def acceleration_t(a0, t, T):
+
+def coord_acceleration(a0, t, T):
     low_t = a0 * (t <= T / 2).astype(int)
     medium_t = -a0 * ((t > T / 2) & (t <= 3 * T / 2)).astype(int)
     high_t = a0 * (t > 3 * T / 2).astype(int)
     return low_t + medium_t + high_t
 
 
-def velocity_t(a0, t, T):
+def coord_velocity(a0, t, T):
     low_t = a0 * t * (t <= T / 2).astype(int)
     medium_t = a0 * (T - t) * ((t > T / 2) & (t <= 3 * T / 2)).astype(int)
     high_t = a0 * (t - 2*T) * (t > 3 * T / 2).astype(int)
     return low_t + medium_t + high_t
 
-def trajectory_t(a0, t, T):
+def coord_trajectory(a0, t, T):
     low_t = (0.5)*a0 *(t**2) * (t <= T / 2).astype(int)
     medium_t = (a0*T*t - 0.5*a0*(t**2) - (0.25)*a0*(T**2)) * ((t > T / 2) & (t <= 3 * T / 2)).astype(int)
     high_t = (0.5*a0*((t-2*T)**2)) * (t > 3 * T / 2).astype(int)
     return low_t + medium_t + high_t
 
-def trajectory_tao(a, tao, T, c):
+def acc_trajectory(a, tao, T, c):
     #solve for coordinate time t at proper time tao
-    t = 0
+    # t =
     #calculate the accelration at coordinate time t
-    a = acceleration_t(a, t, T)
+    a = coord_acceleration(a, t, T)
     #find the four vector due to this acceleration
     x = (1/a) * np.cosh(a*tao)
     t = (1/a) * np.sinh(a*tao)
