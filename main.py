@@ -12,7 +12,7 @@ def main():
     t = np.linspace(0, 2 * T, 10000)
     c = 1
 
-
+"""
     tao = proper_time(a0, t, T, c)
     x_t = trajectory_t(a0, t, T)
     v_t = velocity_t(a0, t, T)
@@ -42,7 +42,7 @@ def main():
     plt.plot(tao, a_tao)
     plt.title("A in accelerated coordinates")
     plt.show()
-
+"""
 
 
 def coord_acceleration(a0, t, T):
@@ -50,7 +50,6 @@ def coord_acceleration(a0, t, T):
     medium_t = -a0 * ((t > T / 2) & (t <= 3 * T / 2)).astype(int)
     high_t = a0 * (t > 3 * T / 2).astype(int)
     return low_t + medium_t + high_t
-
 
 def coord_velocity(a0, t, T):
     low_t = a0 * t * (t <= T / 2).astype(int)
